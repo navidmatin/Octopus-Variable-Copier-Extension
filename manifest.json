@@ -10,10 +10,11 @@
     "default_title": "Click here!"
   },
   "background":{
-    "scripts": ["eventPage.js"],
+    "scripts": ["callApi.js"],
     "persistent":false
   },
   "permissions": [
+   "storage",
     "activeTab",
     "https://ajax.googleapis.com/"
   ]

@@ -4,35 +4,60 @@
  This page is shown when the extension button is clicked, because the
  "browser_action" field in manifest.json contains the "default_popup" key with
  value "popup.html".
- -->
+-->
 <html>
-  <head>
-    <title>Getting Started Extension's Popup</title>
-    <style>
-      body {
-        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
-        font-size: 100%;
-      }
-      #status {
-        /* avoid an excessively wide status text */
-        white-space: pre;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        max-width: 400px;
-      }
-    </style>
+<head>
+  <title>Octopus Variable Set Extension</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+      font-size: 100%;
+    }
+    .option {
+      /* avoid an excessively wide status text */
+      white-space: pre;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      max-width: 1000px;
+    }
+  </style>
 
     <!--
       - JavaScript and HTML must be in separate files: see our Content Security
       - Policy documentation[1] for details and explanation.
       -
       - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
-     -->
-    <script src="popup.js"></script>
+    -->
+    <script src="octopus.js" type="text/javascript"></script>
+    <script src="content/sjcl/sjcl.js" type="text/javascript"></script>
+    <script src="content/sjcl/core/sha1.js" type="text/javascript"></script>
+    <script src="popup.js" type="text/javascript"></script>
+
+    <link rel="stylesheet" href="content/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="content/bootstrap/css/bootstrap-theme.min.css"/>
   </head>
   <body>
-    <div id="status"></div>
-    <img id="image-result" hidden>
+    <div class="container">
+      <section id="getOctopusServer" style="visibility: hidden;">
+        <label for="server small" class="option">Your Octopus Server URL:</label>
+        <div class="input-group">
+          <span class="input-group-addon" id="basic-addon3">http://</span>
+          <input type="text" class="form-control" aria-describedby="basic-addon3" id="server">
+        </div>
+        <label for="apiKey small" class="option">Your Octopus Server API Key <small>(We will encrypt and save the information locally)</small>:</label>
+        <div class="input-group">
+          <input type="text" class="form-control" aria-describedby="basic-addon3" id="apiKey">
+        </div>
+        <br/>
+        <button type="button" class="btn btn-default" id="save">Save</button> 
+      </section>
+      <section id="variableSetName" style="visibility: hidden;">
+        <p id="info"></p>
+      </section>
+      <section id="variableCopySection" style="visibility: hidden;">
+        <h1>Copy Variable Name</h1>
+      </section>
+    </div>
   </body>
-</html>
+  </html>
 
