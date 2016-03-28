@@ -76,34 +76,34 @@ function saveServerInfo(){
 
 }
 
-function getRequest()
+function setupController()
 {
     octopusControllerInstance = octopusController(octopusInfo);
-    octopusControllerInstance.callAPI();
 }
 function setUpElements(){
     document.getElementById("save").addEventListener("click", saveServerInfo);
-    document.getElementById("get").addEventListener("click",getRequest);
     document.getElementById('passkey').addEventListener('keyup', enterPass);
-    document.getElementById('password').style.visibility = "visible";
+    document.getElementById('password').style.display = "block";
 }
 
 function showGetServerInfo(){
-  document.getElementById('password').style.visibility = "hidden";
-  document.getElementById("getOctopusServer").style.visibility = "visible";
-  document.getElementById("variableCopySection").style.visibility = "hidden";
-  document.getElementById("variableSetName").style.visibility = "hidden";
+  document.getElementById('password').style.display = "none";
+  document.getElementById("getOctopusServer").display = "block";
+  document.getElementById("variableCopySection").style.display = "none";
+  document.getElementById("variableSetName").style.display = "none";
 }
 
 function showInfo(){
+    setupController();
     octopusInfo.getOctopusServerInfo(function(result){
       if(result)
       {
-        document.getElementById('password').style.visibility = "hidden";
-        document.getElementById("getOctopusServer").style.visibility = "hidden";
-        document.getElementById("variableSetName").style.visibility = "visible";
-        document.getElementById("variableCopySection").style.visibility = "hidden";
-        document.getElementById("badPassword").style.visibility = "hidden";
+        document.getElementById('password').style.display = "none";
+        document.getElementById("getOctopusServer").style.display = "none";
+        document.getElementById("variableSetName").style.display = "block";
+        document.getElementById("variableCopySection").style.display = "none";
+        document.getElementById("badPassword").style.display = "none";
+        createVariableDropDown();
         console.log(result);
         document.getElementById("info").innerHTML = result;
       }
@@ -116,6 +116,18 @@ function showInfo(){
     });
 }
 
+function createVariableDropDown(){
+    var selectStatement = document.getElementById("selectVar");
+    octopusControllerInstance.getAllLibraryVariableSets(function(result){
+        for(var i=0; i<result.length; i++)
+        {
+            var option = document.createElement("option");
+            option.text = result[i].Name;
+            option.value = result[i].Id;
+            selectStatement.add(option);
+        }
+    });
+}
 function enterPass(e){
       if (e.keyCode == 13 && document.activeElement.id === "passkey") {
         var pass = document.getElementById("passkey").value;

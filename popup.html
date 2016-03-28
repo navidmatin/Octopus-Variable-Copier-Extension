@@ -39,7 +39,7 @@
   </head>
   <body>
     <div class="container">
-      <section id="password" style="visibility: hidden;">
+      <section id="password" style="display: none;">
         <label for="server small" class="option">Your encryption password: </label>
         <div class="alert alert-danger" role="alert" id="badPassword" style="visibility: hidden;">Bad Password</div>
           <div class="input-group">
@@ -47,7 +47,7 @@
             <input type="password" class="form-control" aria-describedby="basic-addon3" id="passkey">
           </div>
       </section>
-      <section id="getOctopusServer" style="visibility: hidden;">
+      <section id="getOctopusServer" style="display: none;">
         <label for="server small" class="option">Your Octopus Server URL:</label>
         <div class="input-group">
           <span class="input-group-addon" id="basic-addon3">http://</span>
@@ -60,11 +60,17 @@
         <br/>
         <button type="button" class="btn btn-default" id="save">Save</button> 
       </section>
-      <section id="variableSetName" style="visibility: hidden;">
+      <section id="variableSetName" style="display: none;">
         <p id="info"></p>
+        <div class="form-group">
+            <label for="selectVar">Choose Variable Set:</label>
+            <select class="form-control" id="selectVar">
+                <!--<option>1</option>-->
+            </select>
+        </div>
         <button type="button" class="btn btn-default" id="get">Get</button>
       </section>
-      <section id="variableCopySection" style="visibility: hidden;">
+      <section id="variableCopySection" style="display: none;">
         <h1>Copy Variable Name</h1>
       </section>
     </div>
