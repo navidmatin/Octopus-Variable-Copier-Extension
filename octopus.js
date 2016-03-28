@@ -1,83 +1,66 @@
 
-function Octopus(){
-	var saveOctopusServerServerAddressAPIKey = function(address, apiKey)
-	{
-		var server = {
-			address: address,
-			api:apiKey
-		};
-		setStoredInfo(encrypt(server));
-	}
+function octopus(){
 
-	var getOctopusServerInfo = function(callback)
+
+	function createUrlWithKeyHeaderForOctopus(sectionUrl, callback)
 	{
-		getStoredInfo(function(result, err){
-			console.log('got following:' + result)
+		getOctopusServerInfo(function(result){
 			if(result)
 			{
-				callback(decrypt(result));
+				var resultObject = JSON.parse(result);
+				callback({
+					address:resultObject.address + sectionUrl,
+					parameter:resultObject.api
+				});
 			}
-		});
-
+		})
 	}
 
-
-
-	function encrypt(data)
+	//function for doing POST on Octopus REST-API
+	function octopusServerHttpPostRequest(url, apiKey, callback)
 	{
-		//TODO: Generate the Key and figure out a good way to store it!
-		var encrypt=sjcl.encrypt("KheilyKharyGaveNary", JSON.stringify(data));
-		return encrypt;
-	}
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST", url, true);
 
-	function decrypt(data)
+		xhr.onreadystatechange = function() {//Call a function when the state changes.
+		    if(xhr.readyState == 4 && xhr.status == 200) {
+		        console.log(xhr.responseText);
+		        callback(xhr.responseText);
+		    }
+		}
+		xhr.setRequestHeader("X-Octopus-ApiKey", apiKey);
+		xhr.send(apiKey);
+	}
+	
+	//function for doing GET on Octopus REST-API
+	function octopusServerHttpGetRequest(url, apiKey, callback)
 	{
-		return sjcl.decrypt("KheilyKharyGaveNary", data);
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", url, true);
+
+		xhr.onreadystatechange = function() {//Call a function when the state changes.
+		    if(xhr.readyState == 4 && xhr.status == 200) {
+		        console.log(xhr.responseText);
+		        callback(xhr.responseText);
+		    }
+		}
+		xhr.setRequestHeader("X-Octopus-ApiKey", apiKey);
+		xhr.send(apiKey);
 	}
 
-	function setStoredInfo(data)
+
+
+	var callAPI = function()
 	{
-		chrome.storage.local.set({OctopusVariableCopyExtensionData:data}, function(){
-			console.log('Server info has been saved');
-		});
-	}
-	//GetStoredInfo reads back storedInformation call like this: getStoredInfo(function(result, [optional] err){});
-	function getStoredInfo(callback)
-	{
-		chrome.storage.local.get(['OctopusVariableCopyExtensionData'], function(result){
-			//Always get the first on
+		createUrlWithKeyHeaderForOctopus("/api/libraryvariablesets", function(result){
+			octopusServerHttpGetRequest("http://" + result.address, result.parameter, function(){});
+		})
 
-			if(result.OctopusVariableCopyExtensionData)
-			{
-				callback(result.OctopusVariableCopyExtensionData, null);
-			}
-			else
-			{
-				callback(null, chrome.runtime.lastError);
-			}
-
-		});
 	}
 
-	var isSaveExist = function(callback)
-	{
-		getStoredInfo(function(result, err){
-			if(result)
-			{
-				callback(true);
-			}
-			else
-			{
-				console.log(err);
-				callback(false);
-			}
 
-		});
-	}
 	return {
-		saveOctopusServerServerAddressAPIKey: saveOctopusServerServerAddressAPIKey,
-		getOctopusServerInfo: getOctopusServerInfo,
-		isSaveExist: isSaveExist
+		callAPI: callAPI
 	}
 }
 

@@ -8,6 +8,8 @@
  * @param {function(string)} callback - called when the URL of the current tab
  *   is found.
  */
+
+ var octopusInfo = null;
 function getCurrentTabUrl(callback) {
   // Query filter to be passed to chrome.tabs.query - see
   // https://developer.chrome.com/extensions/tabs#method-query
@@ -47,8 +49,10 @@ function getCurrentTabUrl(callback) {
   // alert(url); // Shows "undefined", because chrome.tabs.query is async.
 }
 
-function isThereSavedInfo(){
-    Octopus().isSaveExist(function(result){
+function isThereSavedInfo(pass){
+    //Instantiation octopusInfo with password
+    octopusInfo = octopusServerInfo(pass);
+    octopusInfo.doesSaveExist(function(result){
     console.log(result);
     if(!result)
     {
@@ -63,33 +67,61 @@ function isThereSavedInfo(){
 }
 
 function saveServerInfo(){
-  document.getElementById("save").addEventListener("click", function(){
+
     var server = document.getElementById("server").value;
 
-    Octopus().saveOctopusServerServerAddressAPIKey(server, document.getElementById("apiKey").value);
+    octopusInfo.saveOctopusServerServerAddressAPIKey(server, document.getElementById("apiKey").value);
     showInfo();
-  })
+
+}
+
+function getRequest()
+{
+    octopus().callAPI();
+}
+function setUpElements(){
+    document.getElementById("save").addEventListener("click", saveServerInfo);
+    document.getElementById("get").addEventListener("click",getRequest);
+    document.getElementById('passkey').addEventListener('keyup', enterPass);
+    document.getElementById('password').style.visibility = "visible";
 }
 
 function showGetServerInfo(){
+  document.getElementById('password').style.visibility = "hidden";
   document.getElementById("getOctopusServer").style.visibility = "visible";
   document.getElementById("variableCopySection").style.visibility = "hidden";
   document.getElementById("variableSetName").style.visibility = "hidden";
 }
 
 function showInfo(){
-    document.getElementById("getOctopusServer").style.visibility = "hidden";
-    document.getElementById("variableSetName").style.visibility = "visible";
-    document.getElementById("variableCopySection").style.visibility = "hidden";
-    Octopus().getOctopusServerInfo(function(result){
-      console.log(result);
-      document.getElementById("info").innerHTML = result;
+    octopusInfo.getOctopusServerInfo(function(result){
+      if(result)
+      {
+        document.getElementById('password').style.visibility = "hidden";
+        document.getElementById("getOctopusServer").style.visibility = "hidden";
+        document.getElementById("variableSetName").style.visibility = "visible";
+        document.getElementById("variableCopySection").style.visibility = "hidden";
+        document.getElementById("badPassword").style.visibility = "hidden";
+        console.log(result);
+        document.getElementById("info").innerHTML = result;
+      }
+      else
+      {
+        document.getElementById("badPassword").style.visibility = "visible";
+        result = "BAD PASSWORD";
+        console.log(result);
+      }
     });
 }
 
+function enterPass(e){
+      if (e.keyCode == 13 && document.activeElement.id === "passkey") {
+        var pass = document.getElementById("passkey").value;
+        isThereSavedInfo(pass);
+    }
+}
 window.onload = function (){
-  isThereSavedInfo();
-  saveServerInfo();
+  setUpElements();
 }
 
 /**

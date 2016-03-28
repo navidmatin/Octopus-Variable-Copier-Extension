@@ -28,6 +28,7 @@
       -
       - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
     -->
+    <script src="octopusServerInfo.js" type="text/javascript"></script>
     <script src="octopus.js" type="text/javascript"></script>
     <script src="content/sjcl/sjcl.js" type="text/javascript"></script>
     <script src="content/sjcl/core/sha1.js" type="text/javascript"></script>
@@ -38,6 +39,14 @@
   </head>
   <body>
     <div class="container">
+      <section id="password" style="visibility: hidden;">
+        <label for="server small" class="option">Your encryption password: </label>
+        <div class="alert alert-danger" role="alert" id="badPassword" style="visibility: hidden;">Bad Password</div>
+          <div class="input-group">
+            <span class="input-group-addon" id="basic-addon3">password</span>
+            <input type="password" class="form-control" aria-describedby="basic-addon3" id="passkey">
+          </div>
+      </section>
       <section id="getOctopusServer" style="visibility: hidden;">
         <label for="server small" class="option">Your Octopus Server URL:</label>
         <div class="input-group">
@@ -53,6 +62,7 @@
       </section>
       <section id="variableSetName" style="visibility: hidden;">
         <p id="info"></p>
+        <button type="button" class="btn btn-default" id="get">Get</button>
       </section>
       <section id="variableCopySection" style="visibility: hidden;">
         <h1>Copy Variable Name</h1>
