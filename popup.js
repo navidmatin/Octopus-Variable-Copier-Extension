@@ -10,6 +10,7 @@
  */
 
  var octopusInfo = null;
+ var octopusControllerInstance = null;
 function getCurrentTabUrl(callback) {
   // Query filter to be passed to chrome.tabs.query - see
   // https://developer.chrome.com/extensions/tabs#method-query
@@ -77,7 +78,8 @@ function saveServerInfo(){
 
 function getRequest()
 {
-    octopus().callAPI();
+    octopusControllerInstance = octopusController(octopusInfo);
+    octopusControllerInstance.callAPI();
 }
 function setUpElements(){
     document.getElementById("save").addEventListener("click", saveServerInfo);

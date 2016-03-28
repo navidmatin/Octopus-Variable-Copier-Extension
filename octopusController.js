@@ -1,10 +1,10 @@
 
-function octopus(){
-
-
+function octopusController(octopusServerInfo){
+    
+    
 	function createUrlWithKeyHeaderForOctopus(sectionUrl, callback)
 	{
-		getOctopusServerInfo(function(result){
+		octopusServerInfo.getOctopusServerInfo(function(result){
 			if(result)
 			{
 				var resultObject = JSON.parse(result);
