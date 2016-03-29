@@ -1,22 +1,23 @@
 {
-  "manifest_version": 2,
+	"manifest_version": 2,
 
-  "name": "Octopus Variable Set Extension",
-  "description": "This extension is used to copy over Octopus Deploy Variable Sets",
-  "version": "1.0",
-  "browser_action": {
-    "default_icon": "icon.png",
-    "default_popup": "popup.html",
-    "default_title": "Click here!"
-  },
-  "background":{
-    "scripts": ["callApi.js"],
-    "persistent":false
-  },
-  "permissions": [
+	"name": "Octopus Variable Set Extension",
+	"description": "This extension is used to copy over Octopus Deploy Variable Sets",
+	"version": "1.0",
+	"browser_action": {
+		"default_icon": "icon.png",
+		"default_popup": "popup.html",
+		"default_title": "Click here!"
+	},
+	"background": {
+		"scripts": ["callApi.js"],
+		"persistent": false
+	},
+	"permissions": [
    "storage",
     "activeTab",
     "https://ajax.googleapis.com/",
-    "http://*/"
+    "http://*/",
+	"tabs"
   ]
 }
