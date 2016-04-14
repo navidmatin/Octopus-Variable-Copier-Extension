@@ -70,7 +70,11 @@
 					<!--<option>1</option>-->
 				</select>
 			</div>
-			<button type="button" class="btn btn-default btn-lg" id="get">Get</button>
+			<div class="input-group" style="width:300px">
+				<span class="input-group-addon" id="basic-addon3"><small>New Variable Set Name:</small></span>
+				<input type="text" class="form-control" aria-describedby="basic-addon3" id="newVarSet">
+			</div>
+			<button type="button" class="btn btn-default btn-lg" id="copy">Copy</button>
 			<div class="panel panel-default" id="infoPanel" style="display:none">
 				<div class="panel-heading">
 					<h3 class="panel-title" id="panelTitle"></h3>
@@ -78,6 +82,7 @@
 				<div class="panel-body" id="panelBody">
 				</div>
 			</div>
+
 		</section>
 		<section id="variableCopySection" style="display: none;">
 			<h1>Copy Variable Name</h1>

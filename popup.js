@@ -9,9 +9,11 @@
  *   is found.
  */
 //Opens up a new pop up rather than attached:
-chrome.browserAction.onClicked.addListener(function() {
-   chrome.windows.create({'url': 'popup.html', 'type': 'popup'}, function(window) {
-   });
+chrome.browserAction.onClicked.addListener(function () {
+	chrome.windows.create({
+		'url': 'popup.html',
+		'type': 'popup'
+	}, function (window) {});
 });
 
 var octopusInfo = null;
@@ -87,7 +89,8 @@ function setUpElements() {
 	document.getElementById("save").addEventListener("click", saveServerInfo);
 	document.getElementById('passkey').addEventListener('keyup', enterPass);
 	document.getElementById('password').style.display = "block";
-	document.getElementById("get").addEventListener("click", getLibraryVariableSetInfo);
+	document.getElementById("copy").addEventListener("click", copyVariableSet);
+	document.getElementById("selectVar").addEventListener("change", onVariableDropDownChange);
 }
 
 function showGetServerInfo() {
@@ -117,6 +120,11 @@ function showInfo() {
 	});
 }
 
+function onVariableDropDownChange() {
+	var select = document.getElementById("selectVar");
+	document.getElementById("newVarSet").value = select.options[select.selectedIndex].text;
+}
+
 function createVariableDropDown() {
 	var selectStatement = document.getElementById("selectVar");
 	octopusControllerInstance.getAllLibraryVariableSets(function (result) {
@@ -129,17 +137,13 @@ function createVariableDropDown() {
 	});
 }
 
-function getLibraryVariableSetInfo()
-{
+function copyVariableSet() {
 	//Get currently selected lib var set id
-	octopusControllerInstance.getLibraryVariableSetContent(document.getElementById("selectVar").value, function(result){
-		if(result)
-			{
-				document.getElementById("infoPanel").style.display = "block";
-				document.getElementById("panelTitle").innerHTML = result.LibraryVariableSet.Name;
-				document.getElementById("panelBody").innerHTML = JSON.stringify(result.Variables, null, 2);
-			}
-	});
+	octopusControllerInstance.copyLibraryVariableSet(document.getElementById("selectVar").value, document.getElementById("newVarSet").value, null, 1, function (result) {
+		document.getElementById("infoPanel").style.display = "block";
+		document.getElementById("panelBody").innerHTML = result;
+	})
+
 }
 
 function enterPass(e) {
