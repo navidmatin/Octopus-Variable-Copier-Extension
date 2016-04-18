@@ -88,8 +88,10 @@ function setupController() {
 function setUpElements() {
 	document.getElementById("save").addEventListener("click", saveServerInfo);
 	document.getElementById('passkey').addEventListener('keyup', enterPass);
+	document.getElementById('passEnter').addEventListener('click', login);
 	document.getElementById('password').style.display = "block";
 	document.getElementById("copy").addEventListener("click", copyVariableSet);
+	document.getElementById("copywtScope").addEventListener("click", copyVariableSetWithScope);
 	document.getElementById("selectVar").addEventListener("change", onVariableDropDownChange);
 }
 
@@ -111,7 +113,6 @@ function showInfo() {
 			document.getElementById("badPassword").style.display = "none";
 			createVariableDropDown();
 			console.log(result);
-			document.getElementById("info").innerHTML = result;
 		} else {
 			document.getElementById("badPassword").style.display = "block";
 			result = "BAD PASSWORD";
@@ -139,18 +140,42 @@ function createVariableDropDown() {
 
 function copyVariableSet() {
 	//Get currently selected lib var set id
-	octopusControllerInstance.copyLibraryVariableSet(document.getElementById("selectVar").value, document.getElementById("newVarSet").value, null, 1, function (result) {
-		document.getElementById("infoPanel").style.display = "block";
-		document.getElementById("panelBody").innerHTML = result;
+	octopusControllerInstance.copyLibraryVariableSet(document.getElementById("selectVar").value, document.getElementById("newVarSet").value, null, 1, false, function (result) {
+		if (result) {
+			document.getElementById("success").style.display = "block";
+			document.getElementById("failure").style.display = "none";
+		} else {
+			document.getElementById("success").style.display = "none";
+			document.getElementById("failure").style.display = "block";
+		}
 	})
 
 }
 
+function copyVariableSetWithScope() {
+	//Get currently selected lib var set id
+	octopusControllerInstance.copyLibraryVariableSet(document.getElementById("selectVar").value, document.getElementById("newVarSet").value, null, 1, true, function (result) {
+		if (result) {
+			document.getElementById("success").style.display = "block";
+			document.getElementById("failure").style.display = "none";
+		} else {
+			document.getElementById("success").style.display = "none";
+			document.getElementById("failure").style.display = "block";
+		}
+	})
+
+}
+
+
 function enterPass(e) {
 	if (e.keyCode == 13 && document.activeElement.id === "passkey") {
-		var pass = document.getElementById("passkey").value;
-		isThereSavedInfo(pass);
+		login();
 	}
+}
+
+function login() {
+	var pass = document.getElementById("passkey").value;
+	isThereSavedInfo(pass);
 }
 window.onload = function () {
 	setUpElements();

@@ -40,14 +40,20 @@
 </head>
 
 <body>
-	<div class="container">
+	<div class="container" style="width:500px;height:300px">
 		<section id="password" style="display: none;">
 			<label for="server small" class="option">Your encryption password: </label>
-			<div class="alert alert-danger" role="alert" id="badPassword" style="visibility: hidden;">Bad Password</div>
+			<div class="alert alert-danger" role="alert" id="badPassword" style="display:none">Bad Password</div>
+			<div class="alert alert-warning alert-dismissible" role="alert" style="display:none" id="badPassword">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<strong>Bad Password!</strong>
+			</div>
 			<div class="input-group">
 				<span class="input-group-addon" id="basic-addon3">password</span>
 				<input type="password" class="form-control" aria-describedby="basic-addon3" id="passkey">
 			</div>
+			<br/>
+			<button type="button" class="btn btn-success" id="passEnter">Enter</button>
 		</section>
 		<section id="getOctopusServer" style="display: none;">
 			<label for="server small" class="option">Your Octopus Server URL:</label>
@@ -63,7 +69,6 @@
 			<button type="button" class="btn btn-default" id="save">Save</button>
 		</section>
 		<section id="variableSetName" style="display: none;">
-			<p id="info"></p>
 			<div class="form-group">
 				<label for="selectVar">Choose Variable Set:</label>
 				<select class="form-control" id="selectVar">
@@ -74,19 +79,27 @@
 				<span class="input-group-addon" id="basic-addon3"><small>New Variable Set Name:</small></span>
 				<input type="text" class="form-control" aria-describedby="basic-addon3" id="newVarSet">
 			</div>
-			<button type="button" class="btn btn-default btn-lg" id="copy">Copy</button>
-			<div class="panel panel-default" id="infoPanel" style="display:none">
-				<div class="panel-heading">
-					<h3 class="panel-title" id="panelTitle"></h3>
-				</div>
-				<div class="panel-body" id="panelBody">
-				</div>
+			<hr/>
+			<button type="button" class="btn btn-default btn-lg" id="copy">Copy without scope!</button>
+			<br/>
+			<hr/>
+			<button type="button" class="btn btn-warning btn-xs" id="copywtScope">Copy with scope!</button>
+			<small class="text-muted">Danger Zone: This can break builds!</small>
+			<br/>
+			<div class="alert alert-success alert-dismissible" role="alert1" id="success" style="display:none">
+				<button type="button" class="close" data-dismiss="alert1" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<strong>Copying is complete!</strong>.
 			</div>
+			<div class="alert alert-danger alert-dismissible" role="alert2" id="failure" style="display:none">
+				<button type="button" class="close" data-dismiss="alert2" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<strong>Failed to Copy!</strong>
+			</div>
+	</div>
 
-		</section>
-		<section id="variableCopySection" style="display: none;">
-			<h1>Copy Variable Name</h1>
-		</section>
+	</section>
+	<section id="variableCopySection" style="display: none;">
+		<h1>Copy Variable Name</h1>
+	</section>
 	</div>
 </body>
 

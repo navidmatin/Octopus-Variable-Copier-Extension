@@ -166,7 +166,7 @@ function octopusController(octopusServerInfo) {
 	}
 
 	//Copies library variable sets
-	var copyLibraryVariableSet = function (originalId, newName, description, numberOfCopies, callback) {
+	var copyLibraryVariableSet = function (originalId, newName, description, numberOfCopies, withScope, callback) {
 
 		getLibraryVariableSetContent(originalId, function (oldLibVarSet) {
 			if (oldLibVarSet.LibraryVariableSet) {
@@ -175,7 +175,7 @@ function octopusController(octopusServerInfo) {
 				}
 				createNewLibraryVariableSet(newName, description, function (newLibVarSet) {
 					if (newLibVarSet) {
-						copyVariables(newLibVarSet, oldLibVarSet.Variables, false, function (result) {
+						copyVariables(newLibVarSet, oldLibVarSet.Variables, withScope, function (result) {
 							callback(result);
 						});
 					}
