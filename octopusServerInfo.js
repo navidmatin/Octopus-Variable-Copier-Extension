@@ -55,7 +55,6 @@ function octopusServerInfo(password){
 	var getOctopusServerInfo = function(callback)
 	{
 		getStoredInfo(function(result, err){
-			console.log('got following:' + result)
 			if(result)
 			{
 				var decrypted = decrypt(result);

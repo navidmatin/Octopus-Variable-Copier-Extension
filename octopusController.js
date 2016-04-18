@@ -1,5 +1,5 @@
 function octopusController(octopusServerInfo) {
-
+	var octopusController = this;
 
 	function createUrlWithKeyHeaderForOctopus(sectionUrl, callback) {
 		octopusServerInfo.getOctopusServerInfo(function (result) {
@@ -10,7 +10,7 @@ function octopusController(octopusServerInfo) {
 					key: resultObject.api
 				});
 			}
-		})
+		});
 	}
 
 	//function for doing POST on Octopus REST-API
@@ -19,11 +19,10 @@ function octopusController(octopusServerInfo) {
 		xhr.open("POST", url, true);
 
 		xhr.onreadystatechange = function () { //Call a function when the state changes.
-			if (xhr.readyState == 4 && xhr.status == 200) {
-				console.log(xhr.response);
+			if (xhr.readyState === 4) {
 				callback(xhr.response);
 			}
-		}
+		};
 		xhr.setRequestHeader("X-Octopus-ApiKey", apiKey);
 		xhr.send(JSON.stringify(body));
 	}
@@ -35,11 +34,10 @@ function octopusController(octopusServerInfo) {
 		xhr.open("GET", url, true);
 
 		xhr.onreadystatechange = function () { //Call a function when the state changes.
-			if (xhr.readyState == 4 && xhr.status == 200) {
-				console.log(xhr.response);
+			if (xhr.readyState === 4) {
 				callback(xhr.response);
 			}
-		}
+		};
 		xhr.setRequestHeader("X-Octopus-ApiKey", apiKey);
 		xhr.send();
 	}
@@ -50,11 +48,11 @@ function octopusController(octopusServerInfo) {
 		xhr.open("PUT", url, true);
 
 		xhr.onreadystatechange = function () { //Call a function when the state changes.
-			if (xhr.readyState == 4 && xhr.status == 200) {
+			if (xhr.readyState === 4) {
 				console.log(xhr.response);
 				callback(xhr.response);
 			}
-		}
+		};
 		xhr.setRequestHeader("X-Octopus-ApiKey", apiKey);
 		xhr.send(JSON.stringify(body));
 	}
@@ -66,6 +64,66 @@ function octopusController(octopusServerInfo) {
 				var varSet = JSON.parse(variableSet);
 				callback(varSet);
 			});
+		});
+	}
+
+	//Creates a new empty variable set
+	function createNewLibraryVariableSet(name, description, callback) {
+		var data = {
+			"ContentType": "Variables",
+			"Name": name,
+			"Description": description
+		};
+		createUrlWithKeyHeaderForOctopus("/api/libraryvariablesets", function (result) {
+			octopusServerHttpPostRequest(result.address, result.key, data, function (result) {
+				if (result) {
+					callback(JSON.parse(result));
+				} else {
+					callback(null);
+				}
+
+			});
+		});
+
+	}
+
+	//Add a set of variables to a variable set
+	function copyVariables(newLibVarSet, oldVariableSet, keepScope, callback) {
+		createUrlWithKeyHeaderForOctopus("/api/variables/" + newLibVarSet.VariableSetId, function (result) {
+			if (result) {
+				var newVarSet = {
+					Id: newLibVarSet.VariableSetId,
+					OwnerId: newLibVarSet.Id,
+					ScopeValues: oldVariableSet.ScopeValues,
+					Version:0,
+					Variables: []
+				};
+				for (var i = 0; i < oldVariableSet.Variables.length; i++) {
+					var scope = {};
+					if (keepScope) {
+						scope = oldVariableSet.Variables[i].Scope;
+					}
+					var variableJSON = {
+						IsEditable: oldVariableSet.Variables[i].IsEditable,
+						IsSensitive: oldVariableSet.Variables[i].IsSensitive,
+						Prompt: oldVariableSet.Variables[i].Prompt,
+						Scope: scope,
+						Value: oldVariableSet.Variables[i].Value,
+						Name: oldVariableSet.Variables[i].Name
+					};
+					newVarSet.Variables.push(variableJSON);
+				}
+				octopusServerHttpPutRequest(result.address, result.key, newVarSet, function (result) {
+					if (!result) {
+						callback(false);
+					}
+				});
+				callback(true);
+			} else {
+				callback(false);
+			}
+
+
 		});
 	}
 
@@ -107,53 +165,19 @@ function octopusController(octopusServerInfo) {
 
 	}
 
-	function createNewLibraryVariableSet(name, description, callback) {
-		var data = {
-			"ContentType": "Variables",
-			"Name": name,
-			"Description": description
-		};
-		createUrlWithKeyHeaderForOctopus("/api/libraryvariablesets", function (result) {
-			octopusServerHttpPostRequest(result.address, result.key, data, function (result) {
-				if (result) {
-					callback(JSON.parse(result));
-				} else {
-					callback(null);
-				}
-
-			});
-		});
-
-	}
-
-	function addVariablesToVariableSet(varSetId, variablesArray) {
-		createUrlWithKeyHeaderForOctopus("/api/variables/" + varSetId, function (result) {
-			if (result) {
-				for (var i = 0; i < variablesArray.length; i++) {
-					octopusServerHttpPutRequest(result.address, result.key, variableJSON, function (result) {
-						if (!result) {
-							callback(false);
-						}
-					});
-				}
-				callback(true);
-			} else {
-				callback(false);
-			}
-
-
-		});
-	}
-
+	//Copies library variable sets
 	var copyLibraryVariableSet = function (originalId, newName, description, numberOfCopies, callback) {
-		this.getLibraryVariableSetContent(originalId, function (oldLibVarSet) {
+
+		getLibraryVariableSetContent(originalId, function (oldLibVarSet) {
 			if (oldLibVarSet.LibraryVariableSet) {
 				if (!description) {
 					description = oldLibVarSet.LibraryVariableSet.Description;
 				}
 				createNewLibraryVariableSet(newName, description, function (newLibVarSet) {
-					if (newLibVarSet.Id) {
-						callback(addVariablesToVariableSet(newLibVarSet.VariableSetId, oldLibVarSet.Variables));
+					if (newLibVarSet) {
+						copyVariables(newLibVarSet, oldLibVarSet.Variables, false, function (result) {
+							callback(result);
+						});
 					}
 				});
 			}

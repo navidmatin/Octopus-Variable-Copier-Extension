@@ -10,8 +10,7 @@
 		"default_title": "Click here!"
 	},
 	"background": {
-		"scripts": ["callApi.js"],
-		"persistent": false
+		"scripts": ["octopusController.js","octopusServerInfo.js"]
 	},
 	"permissions": [
    "storage",
