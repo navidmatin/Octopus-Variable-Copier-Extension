@@ -1,15 +1,15 @@
-function octopusServerInfo(password){
-
-	var pass= password;
+function octopusServerInfo(){
+	var serverInfo = this;
+	var pass = null;
 	function encrypt(data)
 	{
-		var encrypt=sjcl.encrypt(pass, JSON.stringify(data));
+		var encrypt=sjcl.encrypt(serverInfo.pass, JSON.stringify(data));
 		return encrypt;
 	}
 	function decrypt(data)
 	{
 		try{
-			return sjcl.decrypt(pass, data);
+			return sjcl.decrypt(serverInfo.pass, data);
 		}
 		catch(e)
 		{
@@ -42,7 +42,11 @@ function octopusServerInfo(password){
 
 		});
 	}
-
+	
+	var getPassword = function(password){
+		serverInfo.pass= password;
+	}
+	
 	var saveOctopusServerServerAddressAPIKey = function(address, apiKey)
 	{
 		var server = {
@@ -91,6 +95,7 @@ function octopusServerInfo(password){
 	return {
 		saveOctopusServerServerAddressAPIKey: saveOctopusServerServerAddressAPIKey,
 		getOctopusServerInfo: getOctopusServerInfo,
-		doesSaveExist: doesSaveExist
+		doesSaveExist: doesSaveExist,
+		getPassword: getPassword
 	}
 }

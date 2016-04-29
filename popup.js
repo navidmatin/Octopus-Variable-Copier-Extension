@@ -19,6 +19,7 @@ chrome.browserAction.onClicked.addListener(function () {
 var octopusInfo = null;
 var octopusControllerInstance = null;
 
+
 function getCurrentTabUrl(callback) {
 	// Query filter to be passed to chrome.tabs.query - see
 	// https://developer.chrome.com/extensions/tabs#method-query
@@ -58,15 +59,13 @@ function getCurrentTabUrl(callback) {
 	// alert(url); // Shows "undefined", because chrome.tabs.query is async.
 }
 
-function isThereSavedInfo(pass) {
-	//Instantiation octopusInfo with password
-	octopusInfo = octopusServerInfo(pass);
+function isThereSavedInfo() {
 	octopusInfo.doesSaveExist(function (result) {
 		console.log(result);
 		if (!result) {
 			showGetServerInfo();
 		} else {
-			showInfo();
+			showGetPassword();
 		}
 	});
 
@@ -74,15 +73,10 @@ function isThereSavedInfo(pass) {
 
 function saveServerInfo() {
 
-	var server = document.getElementById("server").value;
-
-	octopusInfo.saveOctopusServerServerAddressAPIKey(server, document.getElementById("apiKey").value);
+	octopusInfo.getPassword(document.getElementById("newPassword").value)
+	octopusInfo.saveOctopusServerServerAddressAPIKey(document.getElementById("server").value, document.getElementById("apiKey").value);
 	showInfo();
 
-}
-
-function setupController() {
-	octopusControllerInstance = octopusController(octopusInfo);
 }
 
 function setUpElements() {
@@ -97,13 +91,18 @@ function setUpElements() {
 
 function showGetServerInfo() {
 	document.getElementById('password').style.display = "none";
-	document.getElementById("getOctopusServer").display = "block";
+	document.getElementById("getOctopusServer").style.display = "block";
 	document.getElementById("variableCopySection").style.display = "none";
 	document.getElementById("variableSetName").style.display = "none";
 }
 
+function showGetPassword(){
+	document.getElementById('password').style.display = "block";
+	document.getElementById("getOctopusServer").style.display = "none";
+	document.getElementById("variableCopySection").style.display = "none";
+	document.getElementById("variableSetName").style.display = "none";
+}
 function showInfo() {
-	setupController();
 	octopusInfo.getOctopusServerInfo(function (result) {
 		if (result) {
 			document.getElementById('password').style.display = "none";
@@ -175,8 +174,16 @@ function enterPass(e) {
 
 function login() {
 	var pass = document.getElementById("passkey").value;
-	isThereSavedInfo(pass);
+	octopusServerInfo.getPassword(pass);
+	showInfo();
+
 }
 window.onload = function () {
+	chrome.runtime.getBackgroundPage(function(win){
+	octopusInfo = win.octopusServerInfo();
+	octopusControllerInstance = win.octopusController(octopusInfo);	
 	setUpElements();
+	isThereSavedInfo();
+	});
+
 }

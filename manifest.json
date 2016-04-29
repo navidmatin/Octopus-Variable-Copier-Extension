@@ -9,9 +9,10 @@
 		"default_popup": "popup.html",
 		"default_title": "Click here!"
 	},
-	"background": {
-		"scripts": ["octopusController.js","octopusServerInfo.js"]
-	},
+  "background": {
+    "scripts": ["octopusController.js","octopusServerInfo.js","content/sjcl/sjcl.js"],
+    "persistent": false
+  },
 	"permissions": [
    "storage",
     "activeTab",
