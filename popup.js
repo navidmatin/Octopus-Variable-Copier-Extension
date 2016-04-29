@@ -96,12 +96,13 @@ function showGetServerInfo() {
 	document.getElementById("variableSetName").style.display = "none";
 }
 
-function showGetPassword(){
+function showGetPassword() {
 	document.getElementById('password').style.display = "block";
 	document.getElementById("getOctopusServer").style.display = "none";
 	document.getElementById("variableCopySection").style.display = "none";
 	document.getElementById("variableSetName").style.display = "none";
 }
+
 function showInfo() {
 	octopusInfo.getOctopusServerInfo(function (result) {
 		if (result) {
@@ -143,9 +144,11 @@ function copyVariableSet() {
 		if (result) {
 			document.getElementById("success").style.display = "block";
 			document.getElementById("failure").style.display = "none";
+			fade(document.getElementById("success"), 100);
 		} else {
 			document.getElementById("success").style.display = "none";
 			document.getElementById("failure").style.display = "block";
+			fade(document.getElementById("failure"), 100);
 		}
 	})
 
@@ -157,9 +160,11 @@ function copyVariableSetWithScope() {
 		if (result) {
 			document.getElementById("success").style.display = "block";
 			document.getElementById("failure").style.display = "none";
+			fade(document.getElementById("success"), 100);
 		} else {
 			document.getElementById("success").style.display = "none";
 			document.getElementById("failure").style.display = "block";
+			fade(document.getElementById("failure"), 100);
 		}
 	})
 
@@ -174,16 +179,29 @@ function enterPass(e) {
 
 function login() {
 	var pass = document.getElementById("passkey").value;
-	octopusServerInfo.getPassword(pass);
+	octopusInfo.getPassword(pass);
 	showInfo();
-
 }
+
+function fade(element, time) {
+	var op = 1; // initial opacity
+	var timer = setInterval(function () {
+		if (op <= 0.1) {
+			clearInterval(timer);
+			element.style.display = 'none';
+		}
+		element.style.opacity = op;
+		element.style.filter = 'alpha(opacity=' + op * 100 + ")";
+		op -= op * 0.1;
+	}, time);
+}
+
 window.onload = function () {
-	chrome.runtime.getBackgroundPage(function(win){
-	octopusInfo = win.octopusServerInfo();
-	octopusControllerInstance = win.octopusController(octopusInfo);	
-	setUpElements();
-	isThereSavedInfo();
+	chrome.runtime.getBackgroundPage(function (win) {
+		octopusInfo = win.octopusServerInfo();
+		octopusControllerInstance = win.octopusController(octopusInfo);
+		setUpElements();
+		isThereSavedInfo();
 	});
 
 }
