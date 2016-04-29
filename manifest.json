@@ -1,9 +1,9 @@
 {
 	"manifest_version": 2,
-
-	"name": "Octopus Variable Copier- An unofficial tool for copying variable sets",
-	"description": "This extension is used for copying variable sets. More Info:",
-	"version": "1.0",
+	"icons": {"92":"icon.png"},
+	"name": "Octopus Variable Copier",
+	"description": "An unofficial tool for copying variable sets. More Info: https://github.com/navidmatin/OctopusVariableSetChromeExt",
+	"version": "0.0.1.0",
 	"browser_action": {
 		"default_icon": "icon.png",
 		"default_popup": "popup.html",
