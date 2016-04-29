@@ -1,4 +1,4 @@
-# OctopusVariableSetChromeExt
+# Octopus Variable Copier- An unofficial tool for copying variable sets
 A chrome extension for modifying Octopus deploy variable sets
 
 
