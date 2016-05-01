@@ -13,3 +13,7 @@ A chrome extension for modifying Octopus deploy variable sets
 ##Libraries used for Project:
 1. Bootstrap
 2. SJCL (Encryption)
+
+### Command Line Tool
+You can also use the command line tool [here](https://github.com/navidmatin/Octopus-Variable-Copy-Cmd-line-utility). 
+Command line tool does not store any data.
