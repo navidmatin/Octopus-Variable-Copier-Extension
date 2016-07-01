@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Octopus Variable Set Extension</title>
+	<style>
+		body {
+			font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+			font-size: 100%;
+		}
+		
+		.option {
+			/* avoid an excessively wide status text */
+			white-space: pre;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			max-width: 1000px;
+		}
+	</style>
+	
+
+	<link rel="stylesheet" href="content/bootstrap/css/bootstrap.min.css" />
+</head>
+
+<body>
+	<div class="container" style="width:500px;height:300px">
+        <hr/>
+        <div class="alert alert-success" role="alert" style="display:none" id="successAlert">
+            Server Info Removed!
+        </div>
+        <button type="button" class="btn btn-danger" id="removeCreds">
+            <span class="glyphicon glyphicon-repeat"></span> Remove Server Info 
+        </button>
+        <br/>
+        <span class="text-muted">This will remove saved credentials from the extensions and you will have to re-enter your Octopus server information!)</span>
+         <hr/>
+	</div>
+    <script src="options.js" type="text/javascript"></script>
+</body>
+
+</html>
