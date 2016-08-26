@@ -1,6 +1,7 @@
 function octopusServerInfo(){
 	var serverInfo = this;
 	var pass = null;
+	var port = chrome.runtime.connect({name: "disconnect"});
 	function encrypt(data)
 	{
 		var encrypt=sjcl.encrypt(serverInfo.pass, JSON.stringify(data));
@@ -92,10 +93,17 @@ function octopusServerInfo(){
 		});
 	}
 
+	var cleanUp = function(){
+		console.log("Cleaning up");
+		serverInfo.pass = "";
+		pass = "";
+	}
+
 	return {
 		saveOctopusServerServerAddressAPIKey: saveOctopusServerServerAddressAPIKey,
 		getOctopusServerInfo: getOctopusServerInfo,
 		doesSaveExist: doesSaveExist,
-		getPassword: getPassword
+		getPassword: getPassword,
+		cleanUp: cleanUp
 	}
 }
