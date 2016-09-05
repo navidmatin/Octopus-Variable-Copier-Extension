@@ -1,6 +1,9 @@
 function octopusController(octopusServerInfo) {
 	var octopusController = this;
 
+	var allLibraryVariableSets = [];
+	var gotAllVariableSets = false;
+
 	function createUrlWithKeyHeaderForOctopus(sectionUrl, callback) {
 		octopusServerInfo.getOctopusServerInfo(function (result) {
 			if (result) {
@@ -95,7 +98,7 @@ function octopusController(octopusServerInfo) {
 					Id: newLibVarSet.VariableSetId,
 					OwnerId: newLibVarSet.Id,
 					ScopeValues: oldVariableSet.ScopeValues,
-					Version:0,
+					Version: 0,
 					Variables: []
 				};
 				for (var i = 0; i < oldVariableSet.Variables.length; i++) {
@@ -127,40 +130,71 @@ function octopusController(octopusServerInfo) {
 		});
 	}
 
+	//Private function that gets called by 'getAllLibraryVariableSets'
+	function getAllLibraryVariableSetsFunc(result, callback) {
+			if (result) {
+				var returnedObject = JSON.parse(result);
+				var allPromises = [];
+
+				for (var i = 1; i <= (returnedObject.TotalResults / returnedObject.ItemsPerPage) + 1; i++) {
+					allPromises.push(getLibraryVariableSetsForPage(i, returnedObject.ItemsPerPage));
+				}
+				Promise.all(allPromises).then(function(){
+					callback(allLibraryVariableSets)
+				});
+			}
+	}
+
+	function addToAllLibraryVariableSets(result) {
+		if (result) {
+			var returnedObject = JSON.parse(result);
+			for (var i = 0; i < returnedObject.Items.length; i++) {
+				allLibraryVariableSets.push(returnedObject.Items[i]);
+			}
+		}
+	}
+
+	function getLibraryVariableSetsForPage(pageNum, itemsPerPage) {
+		return new Promise(function (resolve, reject) {
+			var itemsToSkip = (pageNum - 1) * itemsPerPage;
+			createUrlWithKeyHeaderForOctopus("/api/libraryvariablesets?contentType=Variables&skip=" + itemsToSkip, function (result) {
+				octopusServerHttpGetRequest(result.address, result.key, function(result){
+					addToAllLibraryVariableSets(result);
+					resolve();
+				});
+			});
+		})
+
+	}
+
 	//Gets all of the library variable sets_ callback = function(listOfLibraryVariableSets)
 	var getAllLibraryVariableSets = function (callback) {
 		createUrlWithKeyHeaderForOctopus("/api/libraryvariablesets?contentType=Variables", function (result) {
-			octopusServerHttpGetRequest(result.address, result.key, function (result) {
-				if (result) {
-					var returnedObject = JSON.parse(result);
-					var listOfLibraryVariableSets = [];
-					for (var i = 0; i < returnedObject.Items.length; i++) {
-						listOfLibraryVariableSets.push(returnedObject.Items[i]);
-					}
-					callback(listOfLibraryVariableSets);
-				}
+			octopusServerHttpGetRequest(result.address, result.key, function(result){
+				getAllLibraryVariableSetsFunc(result, callback);
 			});
-		})
+		});
 	}
 
+	function getLibraryVariableSetContentFunc(libraryVariableSet) {
+		if (libraryVariableSet) {
+			var libVarSet = JSON.parse(libraryVariableSet);
+			//Now get the variables for this library variable set
+			getVariables(libVarSet.VariableSetId, function (varSet) {
+				if (varSet) {
+					callback({
+						LibraryVariableSet: libVarSet,
+						Variables: varSet
+					});
+				}
+			});
+		}
+	}
 	//Gets the library variable set object with its variables from octopus [callback: function(result)]
 	var getLibraryVariableSetContent = function (id, callback) {
 		createUrlWithKeyHeaderForOctopus("/api/libraryvariablesets/" + id, function (result) {
 			//First get library variable set itself
-			octopusServerHttpGetRequest(result.address, result.key, function (libraryVariableSet) {
-				if (libraryVariableSet) {
-					var libVarSet = JSON.parse(libraryVariableSet);
-					//Now get the variables for this library variable set
-					getVariables(libVarSet.VariableSetId, function (varSet) {
-						if (varSet) {
-							callback({
-								LibraryVariableSet: libVarSet,
-								Variables: varSet
-							});
-						}
-					});
-				}
-			});
+			octopusServerHttpGetRequest(result.address, result.key, getLibraryVariableSetContent);
 		});
 
 	}
@@ -185,6 +219,7 @@ function octopusController(octopusServerInfo) {
 		});
 
 	}
+
 
 	return {
 		getAllLibraryVariableSets: getAllLibraryVariableSets,
