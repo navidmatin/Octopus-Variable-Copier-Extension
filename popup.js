@@ -89,7 +89,7 @@ function onVariableDropDownChange() {
 
 function createVariableDropDown() {
 	var selectStatement = document.getElementById("selectVar");
-	octopusControllerInstance.getAllLibraryVariableSets(function (result) {
+	octopusControllerInstance.getAllLibraryVariableSets().then(function (result) {
 		for (var i = 0; i < result.length; i++) {
 			var option = document.createElement("option");
 			option.text = result[i].Name;
@@ -101,7 +101,7 @@ function createVariableDropDown() {
 
 function copyVariableSet() {
 	//Get currently selected lib var set id
-	octopusControllerInstance.copyLibraryVariableSet(document.getElementById("selectVar").value, document.getElementById("newVarSet").value, null, 1, false, function (result) {
+	octopusControllerInstance.copyLibraryVariableSet(document.getElementById("selectVar").value, document.getElementById("newVarSet").value, null, 1, false).then(function (result) {
 		if (result) {
 			document.getElementById("success").style.display = "block";
 			document.getElementById("failure").style.display = "none";
@@ -117,7 +117,7 @@ function copyVariableSet() {
 
 function copyVariableSetWithScope() {
 	//Get currently selected lib var set id
-	octopusControllerInstance.copyLibraryVariableSet(document.getElementById("selectVar").value, document.getElementById("newVarSet").value, null, 1, true, function (result) {
+	octopusControllerInstance.copyLibraryVariableSet(document.getElementById("selectVar").value, document.getElementById("newVarSet").value, null, 1, true).then(function (result) {
 		if (result) {
 			document.getElementById("success").style.display = "block";
 			document.getElementById("failure").style.display = "none";
