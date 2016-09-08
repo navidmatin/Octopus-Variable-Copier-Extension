@@ -269,7 +269,7 @@ function octopusController(octopusServerInfo) {
 					}
 					createNewLibraryVariableSet(newName, description).then(function (newLibVarSet) {
 						if (newLibVarSet) {
-							copyVariables(newLibVarSet, oldLibVarSet.Variables, withScope, function (result) {
+							copyVariables(newLibVarSet, oldLibVarSet.Variables, withScope).then(function (result) {
 								resolve(result);
 							});
 						}
