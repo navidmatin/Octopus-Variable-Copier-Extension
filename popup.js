@@ -13,7 +13,7 @@ chrome.browserAction.onClicked.addListener(function () {
 	chrome.windows.create({
 		'url': 'popup.html',
 		'type': 'popup'
-	}, function (window) {});
+	}, function (window) { });
 });
 
 var octopusInfo = null;
@@ -21,7 +21,7 @@ var octopusControllerInstance = null;
 
 //Check to see if this machine has saved information about an Octopus Server
 function isThereSavedInfo() {
-	octopusInfo.doesSaveExist(function (result) {
+	octopusInfo.doesSaveExist().then(function (result) {
 		console.log(result);
 		if (!result) {
 			showGetServerInfo();
@@ -65,7 +65,7 @@ function showGetPassword() {
 }
 
 function showInfo() {
-	octopusInfo.getOctopusServerInfo(function (result) {
+	octopusInfo.getOctopusServerInfo().then(function (result) {
 		if (result) {
 			document.getElementById('password').style.display = "none";
 			document.getElementById("getOctopusServer").style.display = "none";
@@ -74,11 +74,11 @@ function showInfo() {
 			document.getElementById("badPassword").style.display = "none";
 			createVariableDropDown();
 			console.log(result);
-		} else {
-			document.getElementById("badPassword").style.display = "block";
-			result = "BAD PASSWORD";
-			console.log(result);
 		}
+	}).catch(function () {
+		document.getElementById("badPassword").style.display = "block";
+		result = "BAD PASSWORD";
+		console.log(result);
 	});
 }
 
@@ -100,34 +100,49 @@ function createVariableDropDown() {
 }
 
 function copyVariableSet() {
+	hideAlerts();
 	//Get currently selected lib var set id
 	octopusControllerInstance.copyLibraryVariableSet(document.getElementById("selectVar").value, document.getElementById("newVarSet").value, null, 1, false).then(function (result) {
 		if (result) {
 			document.getElementById("success").style.display = "block";
 			document.getElementById("failure").style.display = "none";
-			fade(document.getElementById("success"), 100);
+			fade(document.getElementById("success"), 50);
 		} else {
 			document.getElementById("success").style.display = "none";
 			document.getElementById("failure").style.display = "block";
-			fade(document.getElementById("failure"), 100);
+			fade(document.getElementById("failure"), 50);
 		}
-	})
+	}).catch(function (error) {
+		document.getElementById("success").style.display = "none";
+		document.getElementById("failure").style.display = "block";
+		fade(document.getElementById("failure"), 50);
+	});
 
 }
 
+function hideAlerts() {
+	document.getElementById("success").style.display = "none";
+	document.getElementById("failure").style.display = "none";
+}
+
 function copyVariableSetWithScope() {
+	hideAlerts();
 	//Get currently selected lib var set id
 	octopusControllerInstance.copyLibraryVariableSet(document.getElementById("selectVar").value, document.getElementById("newVarSet").value, null, 1, true).then(function (result) {
 		if (result) {
 			document.getElementById("success").style.display = "block";
 			document.getElementById("failure").style.display = "none";
-			fade(document.getElementById("success"), 100);
+			fade(document.getElementById("success"), 50);
 		} else {
 			document.getElementById("success").style.display = "none";
 			document.getElementById("failure").style.display = "block";
-			fade(document.getElementById("failure"), 100);
+			fade(document.getElementById("failure"), 50);
 		}
-	})
+	}).catch(function (error) {
+		document.getElementById("success").style.display = "none";
+		document.getElementById("failure").style.display = "block";
+		fade(document.getElementById("failure"), 50);
+	});
 
 }
 

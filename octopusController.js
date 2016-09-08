@@ -6,7 +6,7 @@ function octopusController(octopusServerInfo) {
 
 	function createUrlWithKeyHeaderForOctopus(sectionUrl) {
 		return new Promise(function createUrlWithKeyHeaderForOctopusPromise(resolve, reject) {
-			octopusServerInfo.getOctopusServerInfo(function (result) {
+			octopusServerInfo.getOctopusServerInfo().then(function (result) {
 				if (result) {
 					var resultObject = JSON.parse(result);
 					resolve({
@@ -14,10 +14,11 @@ function octopusController(octopusServerInfo) {
 						key: resultObject.api
 					});
 				}
-				else
-				{
+				else {
 					reject();
 				}
+			}).catch(function (error) {
+				reject();
 			});
 		});
 
@@ -29,18 +30,16 @@ function octopusController(octopusServerInfo) {
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", url, true);
 
-			xhr.onload = function(){
-				if(this.status >= 200 && this.status < 300)
-				{
+			xhr.onload = function () {
+				if (this.status >= 200 && this.status < 300) {
 					resolve(xhr.response);
 				}
-				else
-				{
+				else {
 					reject(xhr.response);
 				}
 			}
 
-			xhr.onerror = function(){
+			xhr.onerror = function () {
 				reject();
 			}
 			xhr.setRequestHeader("X-Octopus-ApiKey", apiKey);
@@ -55,18 +54,16 @@ function octopusController(octopusServerInfo) {
 			var xhr = new XMLHttpRequest();
 			var allOfParams = [];
 			xhr.open("GET", url, true);
-			xhr.onload = function(){
-				if(this.status >= 200 && this.status < 300)
-				{
+			xhr.onload = function () {
+				if (this.status >= 200 && this.status < 300) {
 					resolve(xhr.response);
 				}
-				else
-				{
+				else {
 					reject(xhr.response);
 				}
 			}
 
-			xhr.onerror = function(){
+			xhr.onerror = function () {
 				reject();
 			}
 			xhr.setRequestHeader("X-Octopus-ApiKey", apiKey);
@@ -98,11 +95,13 @@ function octopusController(octopusServerInfo) {
 	function getVariables(id) {
 		return new Promise(function getVariablesPromise(resolve, reject) {
 			createUrlWithKeyHeaderForOctopus("/api/variables/" + id).then(function (result) {
-					return octopusServerHttpGetRequest(result.address, result.key)
-				}).then(function (variableSet) {
-					var varSet = JSON.parse(variableSet);
-					resolve(varSet);
-				});
+				return octopusServerHttpGetRequest(result.address, result.key)
+			}).then(function (variableSet) {
+				var varSet = JSON.parse(variableSet);
+				resolve(varSet);
+			}).catch(function (error) {
+				reject();
+			});
 		});
 	}
 
@@ -123,6 +122,8 @@ function octopusController(octopusServerInfo) {
 					} else {
 						reject();
 					}
+				}).catch(function (error) {
+					reject(error);
 				});
 		});
 
@@ -165,6 +166,8 @@ function octopusController(octopusServerInfo) {
 					reject(false);
 				}
 				resolve(true);
+			}).catch(function (error) {
+				reject(false);
 			});
 		});
 
@@ -204,9 +207,11 @@ function octopusController(octopusServerInfo) {
 				octopusServerHttpGetRequest(result.address, result.key).then(function (libVarSets) {
 					addToAllLibraryVariableSets(libVarSets);
 					resolve();
+				}).catch(function (error) {
+					reject();
 				});
 			});
-		})
+		});
 
 	}
 
@@ -221,6 +226,9 @@ function octopusController(octopusServerInfo) {
 				})
 				.then(function (result) {
 					resolve(result);
+				})
+				.catch(function (error) {
+					reject();
 				});
 		});
 	}
@@ -244,7 +252,7 @@ function octopusController(octopusServerInfo) {
 		});
 
 	}
-	
+
 	//Returns Promise
 	//Gets the library variable set object with its variables from octopus
 	var getLibraryVariableSetContent = function (id) {
@@ -255,6 +263,8 @@ function octopusController(octopusServerInfo) {
 				return octopusServerHttpGetRequest(result.address, result.key);
 			}).then(function (result) {
 				return getLibraryVariableSetContentFunc(result);
+			}).catch(function (error) {
+				reject();
 			});
 	}
 
@@ -271,12 +281,18 @@ function octopusController(octopusServerInfo) {
 						if (newLibVarSet) {
 							copyVariables(newLibVarSet, oldLibVarSet.Variables, withScope).then(function (result) {
 								resolve(result);
+							}).catch(function (error) {
+								reject(error);
 							});
 						}
+					}).catch(function (error) {
+						reject(error);
 					});
 				}
 
 			});
+		}).catch(function (error) {
+			reject(error);
 		});
 	}
 
