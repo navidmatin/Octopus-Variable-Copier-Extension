@@ -10,7 +10,7 @@ function octopusController(octopusServerInfo) {
 				if (result) {
 					var resultObject = JSON.parse(result);
 					resolve({
-						address: "http://" + resultObject.address + sectionUrl,
+						address: resultObject.address + sectionUrl,
 						key: resultObject.api
 					});
 				}
