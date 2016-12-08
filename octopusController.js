@@ -9,8 +9,9 @@ function octopusController(octopusServerInfo) {
 			octopusServerInfo.getOctopusServerInfo().then(function (result) {
 				if (result) {
 					var resultObject = JSON.parse(result);
+					var serverAddress = cleanUpAddress(resultObject.address);
 					resolve({
-						address: resultObject.address + sectionUrl,
+						address: serverAddress + sectionUrl,
 						key: resultObject.api
 					});
 				}
@@ -22,6 +23,23 @@ function octopusController(octopusServerInfo) {
 			});
 		});
 
+	}
+
+	function cleanUpAddress(address)
+	{
+		var cleanedBaseAddress = address;
+		//Legacy Code Checks
+		//Check to see if it starts with http, if not add http
+		if(!address.toLowerCase().startsWith("http"))
+		{
+			cleanedBaseAddress = "http://" + address;
+		}
+		//Check to see if the user entered the string with / at the end, if so remove it.
+		if(address.endsWith("/"))
+		{
+			cleanedBaseAddress = cleanedBaseAddress.slice(0,-1);
+		}
+		return cleanedBaseAddress;
 	}
 
 	//function for doing POST on Octopus REST-API
