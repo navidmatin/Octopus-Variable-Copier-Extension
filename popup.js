@@ -99,6 +99,18 @@ function createVariableDropDown() {
 	});
 }
 
+function createEnvironmentDropDown() {
+	let envDropDownList = document.getElementById("envDropDown");
+	octopusControllerInstance.getAllEnvironments().then(function(result) {
+		for(let i =0; i < result.length; i++) {
+			let liDom = document.createElement("li");
+			liDom.text = result[i].Name;
+			liDom.value = result[i].Id;
+			envDropDownList.add(liDom);
+		}
+	});
+}
+
 function copyVariableSet() {
 	hideAlerts();
 	//Get currently selected lib var set id

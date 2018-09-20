@@ -67,7 +67,7 @@
 			<br/>
 			<button type="button" class="btn btn-default" id="save">Save</button>
 		</section>
-		<section id="variableSetName" style="display: none;">
+		<section id="variableSetName" >
 			<div class="form-group">
 				<label for="selectVar">Choose Variable Set:</label>
 				<select class="form-control" id="selectVar">
@@ -79,7 +79,20 @@
 				<input type="text" class="form-control" aria-describedby="basic-addon3" id="newVarSet">
 			</div>
 			<hr/>
-			<button type="button" class="btn btn-default btn-lg" id="copy">Copy without scope!</button>
+			<button type="button" class="btn btn-info btn-md" id="copy">Copy without scope!</button>
+			<hr/>
+			<button type="button" class="btn btn-default btn-md" id="copy-new-scope">Copy with new environment scope</button>
+			<br/>
+			<label for="selectVar">Environment</label>
+			<div class="dropdown">
+				<button class="btn btn-default dropdown-toggle" type="button" id="envDropDown" data-toggle="dropdown">
+					Environments to Add
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="envDropDown" id="envDropDownList">
+					<!-- <li><a href="#">Action</a></li> -->
+				</ul>
+			</div>
 			<br/>
 			<hr/>
 			<button type="button" class="btn btn-warning btn-xs" id="copywtScope">Copy with scope!</button>

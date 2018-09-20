@@ -233,24 +233,6 @@ function octopusController(octopusServerInfo) {
 
 	}
 
-	//Gets all of the library variable sets promise
-	var getAllLibraryVariableSets = function () {
-		return new Promise(function getAllLibVarSetsPromise(resolve, reject) {
-			createUrlWithKeyHeaderForOctopus("/api/libraryvariablesets?contentType=Variables").then(function (result) {
-				return octopusServerHttpGetRequest(result.address, result.key);
-			})
-				.then(function (result) {
-					return getAllLibraryVariableSetsFunc(result);
-				})
-				.then(function (result) {
-					resolve(result);
-				})
-				.catch(function (error) {
-					reject();
-				});
-		});
-	}
-
 	function getLibraryVariableSetContentFunc(libraryVariableSet) {
 		return new Promise(function getLibVarSetContentFuncPromise(resolve, reject) {
 			if (libraryVariableSet) {
@@ -269,6 +251,41 @@ function octopusController(octopusServerInfo) {
 			}
 		});
 
+	}
+
+	var getAllEnvironments = function() {
+		return new Promise(function getEnvironmentsPromise(resolve, reject) {
+			createUrlWithKeyHeaderForOctopus("/api/environments").then(function (result) {
+				return octopusServerHttpGetRequest(result.address, result.key)
+			}).then(function (environments) {
+				let environmentsJson = JSON.parse(environments);
+				let environmentsArray = []
+				environmentsJson.Items.forEach(function(environment){
+					environmentsArray.push({"Id": environment.Id, "Name": environment.Name});
+				});
+				resolve(environmentsArray);
+			}).catch(function (error) {
+				reject(error);
+			});
+		});
+	}
+
+	//Gets all of the library variable sets promise
+	var getAllLibraryVariableSets = function () {
+		return new Promise(function getAllLibVarSetsPromise(resolve, reject) {
+			createUrlWithKeyHeaderForOctopus("/api/libraryvariablesets?contentType=Variables").then(function (result) {
+				return octopusServerHttpGetRequest(result.address, result.key);
+			})
+				.then(function (result) {
+					return getAllLibraryVariableSetsFunc(result);
+				})
+				.then(function (result) {
+					resolve(result);
+				})
+				.catch(function (error) {
+					reject();
+				});
+		});
 	}
 
 	//Returns Promise
@@ -314,14 +331,11 @@ function octopusController(octopusServerInfo) {
 		});
 	}
 
-
-
-
-
 	return {
 		getAllLibraryVariableSets: getAllLibraryVariableSets,
 		getLibraryVariableSetContent: getLibraryVariableSetContent,
 		createNewLibraryVariableSet: createNewLibraryVariableSet,
-		copyLibraryVariableSet: copyLibraryVariableSet
+		copyLibraryVariableSet: copyLibraryVariableSet,
+		getAllEnvironments: getAllEnvironments
 	}
 }
